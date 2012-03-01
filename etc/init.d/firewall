@@ -1,0 +1,109 @@
+#!/bin/sh
+
+##### script variables
+#
+IPTABLES=/usr/sbin/iptables
+
+INT_IP=$(nvram get lan_ipaddr)
+INT_IFACE=$(nvram get lan_ifname)
+EXT_IFACE=$(nvram get wan_ifname)
+
+##### proc setup
+#
+echo "1" > /proc/sys/net/ipv4/ip_forward
+
+##### clean the chains
+#
+$IPTABLES --flush
+$IPTABLES --table nat --flush
+$IPTABLES --delete-chain
+$IPTABLES --table nat --delete-chain
+
+##### set default rules
+$IPTABLES -P INPUT DROP
+$IPTABLES -P OUTPUT ACCEPT
+$IPTABLES -P FORWARD DROP
+
+# bad_tcp_packets chain
+#
+$IPTABLES -I INPUT -p tcp ! --syn -m state --state NEW -j LOG \
+--log-prefix "New not syn:"
+$IPTABLES -I INPUT -p tcp ! --syn -m state --state NEW -j DROP
+
+# add the hotcontrol stuff
+
+# setup the chain
+$IPTABLES -N hotControl
+$IPTABLES -t nat -N hotControl
+
+# allow fragmented packets through
+$IPTABLES -A INPUT -i $INT_IFACE -f -j ACCEPT
+
+# Send all incoming,forwarded packets through the hotControl
+# and DROP packet if they don't return (which they will if they authenicate)
+$IPTABLES -A INPUT   -i $INT_IFACE -j hotControl
+$IPTABLES -A FORWARD -i $INT_IFACE -j hotControl
+#$IPTABLES -A hotControl -j LOG --log-prefix "mofos "
+$IPTABLES -A hotControl -j DROP
+
+# redirect traffic aimed at port 80 somewhere to us 
+# (if hotControl doesn't accept it--which it will if it is authenticated)
+$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -i $INT_IFACE -j hotControl
+$IPTABLES -t nat -A hotControl -p tcp -j DNAT --to $INT_IP:80
+
+##### setup filtering fules
+#
+# ssh open for both interfaces (-A so after hotcontrol)
+$IPTABLES -A INPUT -p tcp --dport 22 -j ACCEPT
+
+# other ports are open for unauthenicated users
+# ping open for both
+$IPTABLES -I INPUT -p icmp --icmp-type 8 -j ACCEPT
+$IPTABLES -I INPUT -p icmp --icmp-type 11 -j ACCEPT
+
+# established ports open for both
+$IPTABLES -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+$IPTABLES -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# everything is open interally for forward (at the bottom again)
+$IPTABLES -A FORWARD -i $INT_IFACE -j ACCEPT
+
+# masquerade for everything
+$IPTABLES -t nat -A POSTROUTING -o $EXT_IFACE -j MASQUERADE
+
+# http open for internal only
+$IPTABLES -I INPUT -i $INT_IFACE -p tcp --dport 80 -j ACCEPT
+#TESTING: open http for ext
+$IPTABLES -I INPUT -i $EXT_IFACE -p tcp --dport 80 -j ACCEPT
+# dns open for internal only
+$IPTABLES -I INPUT -i $INT_IFACE -p udp --dport 53 -j ACCEPT
+# dhcp open for internal only
+$IPTABLES -I INPUT -i $INT_IFACE -p udp --dport 67 -j ACCEPT
+
+# TEMPORARY---FIXME!!
+$IPTABLES -I INPUT -i $EXT_IFACE -p tcp --dport 9000 -j ACCEPT
+$IPTABLES -I INPUT -i $EXT_IFACE -p tcp --dport 81 -j ACCEPT
+$IPTABLES -I INPUT -i $EXT_IFACE -p tcp --dport 1026 -j ACCEPT
+
+#### loopback
+#
+$IPTABLES -I INPUT -i lo -j ACCEPT 
+
+#### deal with MS networks
+#
+$IPTABLES -I INPUT -i $EXT_IFACE -p udp --destination-port 135:139 -j DROP
+$IPTABLES -I INPUT -i $EXT_IFACE -p tcp --destination-port 135:139 -j DROP
+$IPTABLES -I OUTPUT -p udp -d ! 192.168.0.0/16 --destination-port 135:139 -j REJECT
+$IPTABLES -I OUTPUT -p tcp -d ! 192.168.0.0/16 --destination-port 135:139 -j REJECT
+#
+$IPTABLES -I INPUT -p tcp --destination-port 23 -j LOG --log-prefix "telnet attempt"
+$IPTABLES -I INPUT -p tcp --destination-port 79 -j LOG --log-prefix "finger attempt"
+$IPTABLES -I INPUT -p tcp --destination-port 110 -j LOG --log-prefix "pop3 attempt"
+$IPTABLES -I INPUT -p tcp --destination-port 443 -j LOG --log-prefix "https attempt"
+#
+# rules to block the MS Blaster worm
+# (also blocks pings, no good)
+#$IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -d ! 192.168.0.0/16 -j LOG --log-prefix "icmp echo-request"
+#$IPTABLES -A OUTPUT -p icmp --icmp-type echo-request -d ! 192.168.0.0/16 -j DROP 
+#$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -d ! 192.168.0.0/16 -j LOG --log-prefix "icmp echo-reply"
+#$IPTABLES -A OUTPUT -p icmp --icmp-type echo-reply -d ! 192.168.0.0/16 -j DROP

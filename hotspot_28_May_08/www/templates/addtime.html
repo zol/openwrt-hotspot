@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+  <script language="javascript" type="text/javascript" src="admin.js"></script>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"/>
+  <meta http-equiv="cache-control" content="no-cache"/>
+  <title>Add Time to User</title>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <h3>Add time to user with token: "<span dummy="$token">token</span>"</h3>
+
+  <form action="addtime.rb" class="addtime" method="get" onsubmit="return check_addtime(this)">
+    <input type="hidden" name="mac" dummy="$mac"/>
+    <div class="addtime">
+      <div>
+        <!--select name="shortcut">
+          <option>30 Minutes</option>
+          <option>1 Hour</option>
+        </select-->
+        <h4>D:</h4><input type="text" name="days" class="num_input"/>
+        <h4>H:</h4><input type="text" name="hours" class="num_input"/>
+        <h4>M:</h4><input type="text" name="minutes" class="num_input"/>
+      </div>
+
+      <div>
+        <h4>Make Permanent: </h4>
+        <input type="checkbox" name="permanent"/>
+      </div>
+
+      <div>
+        <h4>Rename: </h4>
+        <input type="text" name="identifier"/>
+      </div>
+
+      <div id="buttons">
+        <input type="submit" name="confirm" value="OK"/>
+        <input type="button" name="cancel" value="Cancel" onClick="window.close()"/>
+      </div>
+
+    </div>
+  </form>
+</html>

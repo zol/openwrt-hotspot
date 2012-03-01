@@ -1,0 +1,44 @@
+#!/usr/bin/ruby
+
+require "fcgi"
+require "logger"
+
+include GC
+
+def getBinding(cgi,env)
+  return binding
+end
+
+mytime = File.stat(__FILE__).mtime
+log = Logger.new("/tmp/dispatch.log")
+log.info("test")
+
+require 'cgi'
+
+FCGI.each_cgi do |cgi|
+  script = cgi.env_table['SCRIPT_FILENAME']
+  script.freeze
+  
+  log.info("loading #{script}")
+
+  begin
+    code = IO.read(script)
+    code[-1,1] = '' if code[-1] == 255
+    
+    Dir.chdir( File.dirname(script) )
+    eval code, getBinding(cgi,cgi.env_table) 
+
+    garbage_collect
+
+  rescue Exception => bang
+    log.info("whoops, exception #{bang}")
+  
+  end if (script && File.stat(script).readable?)
+
+  if (File.stat(__FILE__).mtime > mytime)
+    Process.kill 'SIGHUP', Process.pid
+    mytime = File.stat(__FILE__).mtime
+  end
+end
+
+log.info("at the end of file")

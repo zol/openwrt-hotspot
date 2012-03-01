@@ -1,0 +1,76 @@
+body {
+font-family: sans-serif;	
+}
+
+#pendingTable, #onlineTable, #permanentTable, #logsTable, #infoTable {
+  border:             1px solid black;
+  width:              100%;
+}
+
+#container {	
+margin-top:		10px;
+  clear:	      left;
+}
+
+
+.refresh {
+	margin-left: 480px;
+}
+
+#header img {
+float:		     left;
+margin-right:	 10px;
+}
+
+#container {
+  width:              700px;
+}
+
+.token {
+  width:              200px;
+}
+
+#permanentTable .token {
+  width:              280px;
+}
+
+td.addLink {
+  width:              80px;
+}
+
+td.delLink, #onlineTable td.infoLink {
+  width:              80px;
+}
+
+#permanentTable td.infoLink, #pendingTable td.infoLink {
+}
+
+div.addtime h4 {
+  margin-right:         5px;
+}
+
+div.addtime div {
+  margin-bottom:        10px;
+}
+
+div.addtime h4, input, select {
+  display:              inline;
+}
+
+
+div.addtime select {
+  margin-right:         40px;
+}
+
+div#buttons {
+  text-align:           center;
+  word-spacing:         10px;
+}
+
+input.num_input {
+  width:                2em;
+}
+
+#infoTable th {
+  text-align:           left;
+}

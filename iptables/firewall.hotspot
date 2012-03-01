@@ -1,0 +1,22 @@
+##### hot control filtering
+INT_IP=192.168.1.1
+INT_IFACE=eth0
+
+# setup the chain
+$IPTABLES -N hotControl
+$IPTABLES -t nat -N hotControl
+
+# allow fragmented packets through
+$IPTABLES -A INPUT -i $INT_IFACE -f -j ACCEPT
+
+# Send all incoming,forwarded packets through the hotControl
+# and DROP packet if they don't return (which they will if they authenicate)
+$IPTABLES -A INPUT   -i $INT_IFACE -j hotControl
+$IPTABLES -A FORWARD -i $INT_IFACE -j hotControl
+#$IPTABLES -A hotControl -j LOG --log-prefix "mofos "
+$IPTABLES -A hotControl -j DROP
+
+# redirect traffic aimed at port 80 somewhere to us 
+# (if hotControl doesn't accept it--which it will if it is authenticated)
+$IPTABLES -t nat -A PREROUTING -p tcp --dport 80 -i $INT_IFACE -j hotControl
+$IPTABLES -t nat -A hotControl -p tcp -j DNAT --to $INT_IP:80

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+  <script language="javascript" type="text/javascript" src="admin.js"></script>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type"/>
+  <meta http-equiv="cache-control" content="no-cache"/>
+  <title>LiTHIUM Wireless Hotspot
+    Admin (Main)</title>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body onLoad="dopopups()" dummy="$onload">
+<a href="main.rb">Main</a>&nbsp;&nbsp;&nbsp;
+<a href="logs.rb">Logs</a><br>
+<br>
+
+<div id="container">
+
+<div dummy="$pendingPane">
+  <form><input type=button value="Refresh records" onClick="history.go()"></form>
+  <h2>Pending Users</h2>
+  <table id="pendingTable">
+    <tbody>
+      <tr dummy="$pending">
+        <td dummy="$token" class="token">Token</td>
+        <td class="addLink"><a href="addLink" type="popup" h="170" w="350" dummy="$addlink">add time</a></td>
+        <td class="delLink"><a href="delLink" dummy="$dellink">remove</a></td>
+        <td class="infoLink"><a href="infoLink" type="popup" h="180" w="350" dummy="$infolink">info</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div dummy="$onlinePane">
+  <h2>Online</h2>
+  <table id="onlineTable">
+    <tbody>
+      <tr dummy="$online">
+        <td dummy="$token" class="token">Token</td>
+        <td class="addLink"><a href="addLink" type="popup" h="170" w="350" dummy="$addlink">add time</a></td>
+        <td class="delLink"><a href="delLink" dummy="$dellink">remove</a></td>
+        <td class="infoLink"><a href="infoLink" type="popup" h="220" w="400" dummy="$infolink">info</a></td>
+        <td dummy="$timeinfo">Some Time info</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div dummy="$permanentPane">
+  <h2>Permanent</h2>
+  <table id="permanentTable">
+    <tbody>
+      <tr dummy="$permanent">
+        <td dummy="$token" class="token">Token</td>
+        <td class="delLink"><a href="delLink" dummy="$dellink">remove</a></td>
+        <td class="infoLink"><a href="infoLink" type="popup" h="180" w="350" dummy="$infolink">info</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</body>
+</html>

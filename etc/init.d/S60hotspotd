@@ -1,0 +1,9 @@
+#!/bin/sh -
+
+# load some relevant kernel modules
+insmod /lib/modules/`uname -r`/ipt_mac.o
+insmod /lib/modules/`uname -r`/ipt_LOG.o
+
+cd /opt/hotspot/
+
+./hotspotd.rb -f

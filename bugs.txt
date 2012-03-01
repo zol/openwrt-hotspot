@@ -1,0 +1,23 @@
+|wireless hotspot bug list
+| O - Open, F - Fixed
+---------------------------
+F - Wierd crash. Just hotspotd running, attempted uam and OS crashed (ping
+worked). Monitoring RAM at the time, for some reason 3 instances of ruby->uam
+had been started, wtf??
+F - Fix cancel behaviour with form validation in addtime
+F - Add modules to boot. Added to /etc/init.d/hotspot
+F - Time seems out of sync when you add someone
+F - Fixed 404 problem by putting "/uam.rb" in lighttpd.conf instead of
+"/index.html". workaround
+
+F? - Put more stuff in configuration
+
+O - Clean up screens
+O - UAM text
+O - Fix iptables-firewall
+F - Refresh question
+O - I.E problem - layout
+O - UAM not on LAN network
+F - Authenication
+F - Fix tokens
+F - NTP date

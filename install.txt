@@ -1,0 +1,50 @@
+INSTALLATION GUIDE FOR ASUS WL-500G DELUXE
+
+A-- Prepare router for flashing
+-------------------------------
+
+1. Turn on a plug laptop into LAN port.
+2. Browse to 192.168.1.1 (admin/admin)
+3. Follow basic steps to configure router (i.e. setup wan, wlan etc.)
+
+
+B-- Flash the router
+--------------------
+(see http://wiki.openwrt.org/OpenWrt/Docs/Hardware/Asus/WL500GD)
+
+1. Download latest whiterussian image e.g. openwrt-brcm-2.4-squashfs.trx
+2. Make sure plugged in by LAN
+3. Set router to FAILSAFE mode by removing power, press hold reset whilst
+returing power, when power led starts flashing slowly, release reset.
+4. Check you can ping router on 192.168.1.1
+5. enter the following:
+  tftp 192.168.1.1
+  tftp>binary
+  tftp>trace
+  tftp>put openwrt-b...
+6. Wait for it to reboot (wait for AIR light to come on)
+
+
+C-- Connect to router
+---------------------
+
+1. telnet 192.168.1.1
+2. Set the the password (lithium) -- this disables telnet
+3. logout and ssh in
+
+
+D-- Get dnsmasq working
+-----------------------
+1. If dhcp is not working, log into the machine however you can
+2. Check /etc/dnsmasq.conf
+3. Check if it is running in a ps aux
+4. run dnsmasq
+
+
+E-- Copy & install
+-------------------
+1. Run site_deploy.sh <ip> 
+2. Ssh to router, change to /tmp/hotspot, run ./site_install.sh
+
+
+
